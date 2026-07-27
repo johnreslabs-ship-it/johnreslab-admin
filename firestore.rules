@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Public content: anyone can read (so the public site can display it),
+    // only signed-in admins can write (there's only ever one admin user in this setup).
+    match /posts/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /projects/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /downloads/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /categories/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /featuredVideos/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Page views: public site needs to increment counts without being signed in.
+    // Each page gets its own document, e.g. pageviews/_home, pageviews/blog.
+    // This is a simple counter, not sensitive data — acceptable for a personal site,
+    // but note it could technically be spammed by a bot. See README for the tradeoff.
+    match /pageviews/{id} {
+      allow read: if request.auth != null;
+      allow write: if true;
+    }
+
+    // Subscribers: private — only the signed-in admin can read or write.
+    match /subscribers/{id} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
